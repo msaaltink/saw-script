@@ -89,7 +89,7 @@ import qualified Data.SBV.Dynamic as SBV
 import qualified Data.AIG as AIG
 
 -- cryptol
-import qualified Cryptol.ModuleSystem.Env as C (meSolverConfig, meSearchPath)
+import qualified Cryptol.ModuleSystem.Env as C (meSearchPath)
 import qualified Cryptol.TypeCheck as C (SolverConfig)
 import qualified Cryptol.TypeCheck.AST as C
 import qualified Cryptol.TypeCheck.PP as C (ppWithNames, pp, text, (<+>))
@@ -123,6 +123,8 @@ import qualified SAWScript.Prover.What4 as Prover
 import qualified SAWScript.Prover.Exporter as Prover
 import qualified SAWScript.Prover.MRSolver as Prover
 import SAWScript.VerificationSummary
+
+import Verifier.SAW.CryptolEnv( meSolverConfig )
 
 showPrim :: SV.Value -> TopLevel String
 showPrim v = do
@@ -1148,7 +1150,7 @@ eval_int :: TypedTerm -> TopLevel Integer
 eval_int t = do
   sc <- getSharedContext
   cenv <- fmap rwCryptol getTopLevelRW
-  let cfg = C.meSolverConfig (CEnv.eModuleEnv cenv)
+  let cfg = meSolverConfig (CEnv.eModuleEnv cenv)
   unless (null (getAllExts (ttTerm t))) $
     fail "term contains symbolic variables"
   opts <- getOptions
