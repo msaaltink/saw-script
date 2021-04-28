@@ -1193,6 +1193,9 @@ parseUninterpretedSAW sym st sc ref trm app ty =
     VIntType
       -> VInt  <$> mkUninterpretedSAW sym st ref trm app BaseIntegerRepr
 
+    VIntModType n
+      -> VIntMod n <$> mkUninterpretedSAW sym st ref trm app BaseIntegerRepr
+
     -- 0 width bitvector is a constant
     VVecType 0 VBoolType
       -> return $ VWord ZBV
@@ -1336,6 +1339,7 @@ mkArgTerm sc ty val =
     (_, VWord ZBV)       -> return ArgTermBVZero     -- 0-width bitvector is a constant
     (_, VWord (DBV _))   -> return ArgTermVar
     (VUnitType, VUnit)   -> return ArgTermUnit
+    (VIntModType _, VIntMod _ _) -> return ArgTermVar
 
     (VVecType _ ety, VVector vv) ->
       do vs <- traverse force (V.toList vv)
